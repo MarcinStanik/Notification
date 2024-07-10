@@ -1,76 +1,163 @@
-# localhost
+# Information:
 
-url: 
-https://server02.transfer-go.localhost/
+* Author: Marcin Stanik
 
-RabbitMQ url:
-http://localhost:15673/
-l: user
-p: password
+### 1. All API requests ( REST )
+- https://transfer-go.localhost/api/notification
+- https://transfer-go.localhost/api/notification/email
+- https://transfer-go.localhost/api/notification/sms
 
-path: 
-/Users/marcins/works/programming/MagaMS/learning/TransferGo02
+save notifications in the database, function **NotificationService->storage()**
 
-notification processing worker:
-docker compose exec php bin/console app:notification:processing
+tables: 
+- notification
+- notification_recipient
 
-PHP: notification sending RabbitMQ consumer - not work
-docker compose exec php bin/console app:notification:sending:rabbit-mq-consumer
+### 2. every 1 minute CRON execute scrip:
+* file: src/Command/NotificationProcessing.php
+* cron: * * * * * /usr/local/bin/php /app/bin/console app:notification:processing
+* Dockerfile line: 59
 
-Python : notification sending RabbitMQ consumer
-docker compose exec php python3 bin/notificationConsumer.py
+### 3. Scrip check if there are any notifications to send
+
+* function **NotificationService->processing()**
+
+### 4. If there are notifications to send, they are sent to RabbitMQ (AMQP)
+
+* file: src/Service/NotificationService.php
+* line: 127
+
+### 5. RabbitMQ delegates sending notifications to consumers
+
+### 6. RabbitMQ consumer
+
+python bin/notificationConsumer.py
+
+* is possible create **n** numbers of consumers
+* file: frankenphp/docker-entrypoint.sh
+* line: 74
+
+### 7. Python script run PHP script: 
+
+Python
+* file: bin/notificationConsumer.py
+* line: 17
+
+### 8. PHP script is responsible for sending notifications
+
+PHP:
+* src/Command/NotificationSending.php
+* sending function: **NotificationService->send()**
+
+## Summary
+
+There are 3 steps of sending notifications:
+* storage
+* processing
+* send
+
+####################
 
 
-DOCKER
-Docer network:
-docker network create --driver bridge transfer_go_network
-docker network list
+### 1. DOCKER
 
-SERVER_NAME="server02.transfer-go.localhost" docker compose up -d --wait
+* docker compose down --remove-orphans
+* docker compose build --no-cache
+* SERVER_NAME="transfer-go.localhost" docker compose up -d --wait
 
-stop docker container:
-docker compose down --remove-orphans
 
-after Dockerfile changes:
-docker compose down --remove-orphans
-docker compose build --no-cache
-SERVER_NAME="server02.transfer-go.localhost" docker compose up -d --wait
+* docker compose stop
+* SERVER_NAME="transfer-go.localhost" docker compose up -d --wait
 
-after compose.yaml changes
-docker compose stop
-SERVER_NAME="server02.transfer-go.localhost" docker compose up -d --wait
+### 2. URL:
 
-add DB:
-docker compose exec php composer req symfony/orm-pack
-docker compose exec php composer req --dev symfony/maker-bundle
+https://transfer-go.localhost/
 
-docker compose exec php bin/console app:make:entity Notification
+### 3. configs:
 
-docker compose exec php bin/console make:migration
-docker compose exec php bin/console doctrine:migrations:migrate
+- file: config/custom
 
-add RabbitMQ
-docker compose exec php composer req php-amqplib/php-amqplib
+### 4. API
 
-add Validation
-docker compose exec php composer require symfony/validator
+#### 4.1. https://transfer-go.localhost/api/notification
 
-add PHPMailer
-docker compose exec php composer require phpmailer/phpmailer
+```
+curl --location 'https://transfer-go.localhost/api/notification' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+"recipients": [
+{
+"id": 1,
+"name": "Marcin Stanik",
+"email": "marcin.stanik@gmail.com",
+"mobile": "+48609778584"
+},
+{
+"id": 2,
+"name": "Marcin Stanik 2",
+"email": "staniol007@gmail.com",
+"mobile": "+48609778584"
+}
+],
+"subject": "Egzample subject 123",
+"text_body": "Example text body",
+"html_body": "<p>Example html body,<br>second line</p>",
+"maxAmountOfNotificationsPerHour": 50,
+"chanels": ["SMS", "EMAIL"]
+}'
+```
 
-add Twilio
-docker compose exec php composer require twilio/sdk
+#### 4.2. https://transfer-go.localhost/api/notification/email
 
-add HttpCLient
-docker compose exec php composer require symfony/http-client
+```
+curl --location 'https://transfer-go.localhost/api/notification/email' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+"recipients": ["staniol007@gmail.com"],
+"subject": "Egzample subject 123",
+"text_body": "Example text body",
+"html_body": "<p>Example html body,<br>second line</p>",
+"maxAmountOfNotificationsPerHour": 50
+}'
+```
 
-add testing
-docker compose exec php composer req --dev symfony/test-pack
-docker compose exec php bin/phpunit
+#### 4.3. https://transfer-go.localhost/api/notification/sms
 
-Docer network:
-docker network create --driver bridge transfer_go_network
-docker network list
-docker network inspect transfer_go_network
-docker network connect transfer_go_network transfergo02-php-1
+```
+curl --location 'https://transfer-go.localhost/api/notification/sms' \
+--header 'Content-Type: application/json' \
+--data '{
+"recipients": ["+48609778510", "+48609778511", "+48609778512", "+48609778513", "+48609778514", "+48609778515", "+48609778516", "+48609778517", "+48609778518", "+48609778519"],
+"text_body": "Example sms body",
+"maxAmountOfNotificationsPerHour": 3
+}'
+```
 
+### 5. MYSQL
+
+* host: localhost:3312
+* l: app
+* p: !ChangeMe!
+
+## 6. RabbitMQ
+
+* config: config/custom/rabbitmq.yaml
+
+## Screens
+![image 01](assets/01.png)
+
+--
+
+![image 01](assets/02.png)
+
+--
+
+![image 01](assets/03.png)
+
+--
+
+![image 01](assets/04.png)
+
+--
+
+![image 01](assets/05.png)
