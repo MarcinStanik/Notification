@@ -193,14 +193,14 @@ class NotificationService
                 ->setProviderName($Chanel->getUsedProvider()?->getName());
 
             $this->NotificationRecipientRepository->save($NotificationRecipient, true);
-        } catch (\Exception $Ee) {
-            $this->Logger->critical($Ee->getMessage());
+        } catch (\Exception $Ex) {
+            $this->Logger->critical($Ex->getMessage());
 
             $NotificationRecipient
                 ->setStatus(NotificationRecipientStatus::ERROR)
                 ->setStatusDate(new \DateTimeImmutable())
                 ->setSendAttemptCount(($NotificationRecipient->getSendAttemptCount() ?? 0) + 1)
-                ->setSendReport([$Ee->getMessage()]);
+                ->setSendReport(['error' => $Ex->getMessage(), 'code' => $Ex->getCode()]);
 
             $this->NotificationRecipientRepository->save($NotificationRecipient, true);
         }
