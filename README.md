@@ -143,6 +143,9 @@ curl --location 'https://transfer-go.localhost/api/notification/sms' \
 ## 6. RabbitMQ
 
 * config: config/custom/rabbitmq.yaml
+* admin: http://localhost:25672/
+* u: user
+* p: password
 
 ## 7. Test
 
