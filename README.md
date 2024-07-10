@@ -65,6 +65,7 @@ There are 3 steps of sending notifications:
 * docker compose build --no-cache
 * SERVER_NAME="transfer-go.localhost" docker compose up -d --wait
 
+--
 
 * docker compose stop
 * SERVER_NAME="transfer-go.localhost" docker compose up -d --wait
