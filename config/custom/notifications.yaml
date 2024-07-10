@@ -1,0 +1,40 @@
+parameters:
+    notification:
+        sendAttemptCount: 10        # maximum number of attempts to send a single message
+        resendingDelayTime: 1       # delay in minutes for re-sending the notification
+        
+    #RabitMQ
+    notificationRabbitMq:
+        queueName : 'notification'
+        routingKey: 'notification'
+    
+    # Email providers
+    ##################
+    
+    #AmazonSimpleEmailService
+    notificationEmailAmazonSES:
+        isActive: false
+        name: 'AmazonSES'
+        region: 'eu-north-1'
+        userAccessKey: '...'
+        userSecretAccessKey: '...'
+        senderEmail: '...'
+        
+    #SMTP
+    notificationEmailMarcinSMTP:
+        isActive: false
+        name: 'MarcinSMTP'
+        host: '...'
+        user: '...'
+        password: '...'
+        port: 587
+        senderEmail: '...'
+        
+    # SMS providers
+    ##################
+    notificationSmsTwilio:
+        isActive: false
+        name: 'TwilioSMS'
+        accountSid: '...'
+        authToken: '...'
+        senderMobile: '...'    #twilioNumber

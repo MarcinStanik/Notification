@@ -1,0 +1,7 @@
+parameters:
+    #AMQP - RabbitMQ
+    rabbitMq:
+        url: 'rabbitmq'
+        port: 5672
+        user: 'user'
+        password: 'password'
