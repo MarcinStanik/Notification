@@ -1,9 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Service\Notification\Provider;
 
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 
+/**
+ * @author Marcin Stanik <marcin.stanik@gmail.com>
+ * @since 07-2024
+ * @version 1.0.0
+ */
 abstract class AbstractProvider
 {
 

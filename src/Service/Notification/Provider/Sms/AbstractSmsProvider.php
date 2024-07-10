@@ -37,17 +37,28 @@ abstract class AbstractSmsProvider extends AbstractProvider
         return $this->mobileTo;
     }
 
+    /**
+     * @param string|null $mobileTo
+     * @return $this
+     */
     public function setMobileTo(?string $mobileTo): static
     {
         $this->mobileTo = $mobileTo;
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTextBody(): ?string
     {
         return $this->textBody;
     }
 
+    /**
+     * @param string|null $textBody
+     * @return $this
+     */
     public function setTextBody(?string $textBody): static
     {
         $this->textBody = $textBody;

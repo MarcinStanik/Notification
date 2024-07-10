@@ -43,39 +43,64 @@ abstract class AbstractEmailProvider extends AbstractProvider
         return $this->emailTo;
     }
 
+    /**
+     * @param string|null $emailTo
+     * @return $this
+     */
     public function setEmailTo(?string $emailTo): static
     {
         $this->emailTo = $emailTo;
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getSubject(): ?string
     {
         return $this->subject;
     }
 
+    /**
+     * @param string|null $subject
+     * @return $this
+     */
     public function setSubject(?string $subject): static
     {
         $this->subject = $subject;
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTextBody(): ?string
     {
         return $this->textBody;
     }
 
+    /**
+     * @param string|null $textBody
+     * @return $this
+     */
     public function setTextBody(?string $textBody): static
     {
         $this->textBody = $textBody;
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getHtmlBody(): ?string
     {
         return $this->htmlBody;
     }
 
+    /**
+     * @param string|null $htmlBody
+     * @return $this
+     */
     public function setHtmlBody(?string $htmlBody): static
     {
         $this->htmlBody = $htmlBody;
