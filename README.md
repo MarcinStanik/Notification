@@ -142,6 +142,10 @@ curl --location 'https://transfer-go.localhost/api/notification/sms' \
 
 ## 6. RabbitMQ
 
+## 7. Test
+
+* docker compose exec php bin/phpunit
+
 * config: config/custom/rabbitmq.yaml
 
 ## Screens

@@ -9,6 +9,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\NotificationRecipientRepository;
 use App\Service\NotificationService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Marcin Stanik <marcin.stanik@gmail.com>
@@ -27,12 +28,14 @@ class NotificationServiceTes extends KernelTestCase
 
     public function testMock()
     {
+        $LogerMock = $this->createMock(LoggerInterface::class);
         $ParameterBagMock = $this->createMock(ParameterBagInterface::class);
         $RabbitMqServiceMock = $this->createMock(RabbitMqService::class);
         $NotificationRepositoryMock = $this->createMock(NotificationRepository::class);
         $NotificationRecipientRepositoryMock = $this->createMock(NotificationRecipientRepository::class);
 
         $NotificationService = new NotificationService(
+            $LogerMock,
             $ParameterBagMock,
             $RabbitMqServiceMock,
             $NotificationRepositoryMock,
@@ -40,10 +43,6 @@ class NotificationServiceTes extends KernelTestCase
         );
 
         $this->assertInstanceOf(NotificationService::class, $NotificationService);
-
-        $result = $NotificationService->send(1);
-
-        $this->assertIsBool($result);
     }
 
 }

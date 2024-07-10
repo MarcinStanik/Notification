@@ -2,8 +2,6 @@
 
 namespace App\Service;
 
-use App\Dto\Notification\EmailDto;
-use App\Dto\Notification\SmsDto;
 use App\Dto\NotificationDto;
 use App\Entity\Notification;
 use App\Entity\NotificationRecipient;
