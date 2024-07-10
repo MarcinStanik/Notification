@@ -169,3 +169,7 @@ curl --location 'https://transfer-go.localhost/api/notification/sms' \
 --
 
 ![image 01](assets/05.png)
+
+--
+
+![image 01](assets/06.png)
