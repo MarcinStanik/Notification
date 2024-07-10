@@ -30,6 +30,8 @@ class NotificationRecipientRepositoryTest extends AbstractKernelTestCase
             ->getRepository(Notification::class)
             ->findToSend();
 
+        $this->assertIsArray($Notifications);
+
         if (\count($Notifications) > 0) {
             foreach ($Notifications as $Notification) {
                 $NotificationRecipients = $this->EntityManager
