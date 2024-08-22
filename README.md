@@ -2,10 +2,46 @@
 
 * Author: Marcin Stanik
 
+# Used technologies
+
+* PHP 8.3
+* Python
+* Symfony 7.1 - traditional way - MVC, DDD/CQRS will be prepared soon 
+* MySQL
+* RabbitMQ
+* Rest API
+* Docker (dunglas/symfony-docker, https://github.com/dunglas/symfony-docker)
+* Cron job
+* Sending emails by AWS SES (https://docs.aws.amazon.com/ses/latest/APIReference/API_SendEmail.html)
+* Sending email by SMTP
+* Sending SMS by Twilio (https://www.twilio.com/docs/messaging/api)
+
+# Description:
+
+#### 1
+Application is responsible for sending notifications by different channels:
+* Different messaging service providers (email: AWS SES, SMTP | sms: Twilio)
+* Different technologies for communication (e.g. SMS, email, push notification, Facebook Messenger, etc)
+
+#### 2
+* If some of the service notification is down then notification is send by the second one (but only from the same group e.g. email)
+* If all servers down then notification is postponed to send later
+
+#### 3
+Everything is configurable (config/custom/notifications.yaml):
+* define several providers for the same type of notification channel. e.g. two providers for SMS
+* enable/disable different communication channels
+* maximum number of attempts to send a single message
+* delay in minutes for re-sending the notification
+
+#### 4
+Logs:
+* tracking in DB what messages were sent, when, and to whom.
+
 ### 1. All API requests ( REST )
-- https://transfer-go.localhost/api/notification
-- https://transfer-go.localhost/api/notification/email
-- https://transfer-go.localhost/api/notification/sms
+- (POST) https://notification.localhost/api/notification
+- (POST) https://notification.localhost/api/notification/email
+- (POST) https://notification.localhost/api/notification/sms
 
 save notifications in the database, function **NotificationService->storage()**
 
@@ -59,20 +95,24 @@ There are 3 steps of sending notifications:
 ####################
 
 
-### 1. DOCKER
+### Installation
 
+* git clone https://github.com/MarcinStanik/Notification.git notification
+* cd notification
 * docker compose down --remove-orphans
 * docker compose build --no-cache
-* SERVER_NAME="transfer-go.localhost" docker compose up -d --wait
+* SERVER_NAME="notification.localhost" docker compose up -d --wait
+* edit configuration: config/custom/notifications.yaml
+* URL: https://notification.localhost/
 
 --
 
 * docker compose stop
-* SERVER_NAME="transfer-go.localhost" docker compose up -d --wait
+* SERVER_NAME="notification.localhost" docker compose up -d --wait
 
 ### 2. URL:
 
-https://transfer-go.localhost/
+https://notification.localhost/
 
 ### 3. configs:
 
@@ -80,10 +120,10 @@ https://transfer-go.localhost/
 
 ### 4. API
 
-#### 4.1. https://transfer-go.localhost/api/notification
+#### 4.1. https://notification.localhost/api/notification
 
 ```
-curl --location 'https://transfer-go.localhost/api/notification' \
+curl --location 'https://notification.localhost/api/notification' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 "recipients": [
@@ -108,10 +148,10 @@ curl --location 'https://transfer-go.localhost/api/notification' \
 }'
 ```
 
-#### 4.2. https://transfer-go.localhost/api/notification/email
+#### 4.2. https://notification.localhost/api/notification/email
 
 ```
-curl --location 'https://transfer-go.localhost/api/notification/email' \
+curl --location 'https://notification.localhost/api/notification/email' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 "recipients": ["staniol007@gmail.com"],
@@ -122,10 +162,10 @@ curl --location 'https://transfer-go.localhost/api/notification/email' \
 }'
 ```
 
-#### 4.3. https://transfer-go.localhost/api/notification/sms
+#### 4.3. https://notification.localhost/api/notification/sms
 
 ```
-curl --location 'https://transfer-go.localhost/api/notification/sms' \
+curl --location 'https://notification.localhost/api/notification/sms' \
 --header 'Content-Type: application/json' \
 --data '{
 "recipients": ["+48609778510", "+48609778511", "+48609778512", "+48609778513", "+48609778514", "+48609778515", "+48609778516", "+48609778517", "+48609778518", "+48609778519"],
@@ -147,7 +187,7 @@ curl --location 'https://transfer-go.localhost/api/notification/sms' \
 * u: user
 * p: password
 
-## 7. Test
+## 7. Tests
 
 * docker compose exec php bin/phpunit
 
